@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 AWSTemplateFormatVersion : '2017-10-18'
 Transform: AWS::Serverless-2016-10-31
 Description: MXnet-lambda
@@ -9,3 +10,16 @@ Resources:
             Runtime: python2.7
             CodeUri: .
             Timeout: 300
+=======
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MXNet example.
+Resources:
+  MXNetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python2.7
+      CodeUri: .
+      Timeout: 300
+>>>>>>> 5047e4f49a16d7d7c47ccbfd157d4baa1a7c0bf5
