@@ -1,6 +1,5 @@
 '''
 Reference code to showcase MXNet model prediction on AWS Lambda 
-
 @author: Sunil Mallya (smallya@amazon.com)
 version: 0.2
 '''
@@ -62,10 +61,8 @@ def predict(url, mod, synsets):
     img_file = tempfile.NamedTemporaryFile()
     img_file.write(req.read())
     img_file.flush()
-    print("checkpoing0")
  
     img = Image.open(img_file.name)
-    print("checkpoint1")
 
     # PIL conversion
     #size = 224, 224
@@ -89,31 +86,14 @@ def predict(url, mod, synsets):
     img = img[np.newaxis, :] 
  
     # forward pass through the network
-    print("checkpoint2")
     mod.forward(Batch([mx.nd.array(img)]))
-    print("checkpoint3")
-    #print(mod.get_outputs()[0].asnumpy())
-    if not mod.get_outputs():
-        return ''
-    #try:
-    #    prob = mod.get_outputs()[0].asnumpy()
-    #except:
-    #    print("unexpected error:", sys.exc_info()[0])
-    #    raise
     prob = mod.get_outputs()[0].asnumpy()
-    #prob = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])
-    print("checkpoing4")
-
     prob = np.squeeze(prob)
-    print("checkpoing5")
-
     a = np.argsort(prob)[::-1]
     out = '' 
     for i in a[0:5]:
         out += 'probability=%f, class=%s , ' %(prob[i], synsets[i])
-        print('probability=%f, class=%s , ' %(prob[i], synsets[i]))
     out += "\n"
-    print("checkpoing6")
     return out
 
 with open('synset.txt', 'r') as f:
@@ -135,18 +115,10 @@ def lambda_handler(event, context):
         url = event['url']
     
     sym, arg_params, aux_params = load_model(f_symbol_file.name, f_params_file.name)
-<<<<<<< HEAD
-    mod = mx.mod.Module(symbol=sym,label_names=None)
-    mod.bind(for_training=False, data_shapes=[('data', (1,3,224,224))])
-    mod.set_params(arg_params, aux_params, allow_missing=True)
-    print("before predict")
-=======
     mod = mx.mod.Module(symbol=sym, label_names=None)
     mod.bind(for_training=False, data_shapes=[('data', (1,3,224,224))], label_shapes=mod._label_shapes)
     mod.set_params(arg_params, aux_params, allow_missing=True)
->>>>>>> 5047e4f49a16d7d7c47ccbfd157d4baa1a7c0bf5
     labels = predict(url, mod, synsets)
-    print("after predict")
     
     out = {
             "headers": {
